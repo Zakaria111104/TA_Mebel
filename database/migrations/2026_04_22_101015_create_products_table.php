@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('kategori')->nullable();
             $table->unsignedInteger('stok')->default(0);
             $table->unsignedInteger('stok_minimum')->default(0);
-            $table->text('deskripsi')->nullable();
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

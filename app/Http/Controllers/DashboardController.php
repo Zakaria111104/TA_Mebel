@@ -46,6 +46,17 @@ class DashboardController extends Controller
             ->latest(StockMovement::columnDibuat())
             ->limit(6)
             ->get();
+        $pesanWhatsAppStokMinimum = "Peringatan Stok Minimum\n\n";
+        if ($produkStokMenipis->isNotEmpty()) {
+            $pesanWhatsAppStokMinimum .= "Barang berikut perlu segera direstock:\n";
+            foreach ($produkStokMenipis as $produk) {
+                $pesanWhatsAppStokMinimum .= "- {$produk->nama}: stok {$produk->stok}, minimum {$produk->stok_minimum}\n";
+            }
+            $pesanWhatsAppStokMinimum .= "\nMohon segera dilakukan pengadaan barang.";
+        } else {
+            $pesanWhatsAppStokMinimum .= 'Semua stok barang masih aman.';
+        }
+        $nomorPenerimaWhatsApp = collect(config('services.whatsapp.target_numbers', []));
         $stokAman = max(0, $totalProduk - $stokMenipis);
         $persentaseStokAman = $totalProduk > 0 ? (int) round(($stokAman / $totalProduk) * 100) : 100;
         $topPergerakanProduk = StockMovement::with('product')
@@ -164,6 +175,8 @@ class DashboardController extends Controller
             'perubahanBarangKeluar' => $perubahanBarangKeluar,
             'produkStokMenipis' => $produkStokMenipis,
             'aktivitasTerbaru' => $aktivitasTerbaru,
+            'pesanWhatsAppStokMinimum' => $pesanWhatsAppStokMinimum,
+            'nomorPenerimaWhatsApp' => $nomorPenerimaWhatsApp,
             'persentaseStokAman' => $persentaseStokAman,
             'topPergerakanProduk' => $topPergerakanProduk,
             'produkTercepatTerjual' => $produkTercepatTerjual,

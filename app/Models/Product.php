@@ -24,7 +24,7 @@ class Product extends Model
         'kategori',
         'stok',
         'stok_minimum',
-        'deskripsi',
+        'keterangan',
     ];
 
     public function stockMovements(): HasMany

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LostStock;
 use App\Models\StockMovement;
 use Carbon\Carbon;
 use Dompdf\Dompdf;
@@ -21,12 +22,7 @@ class ReportController extends Controller
         $this->ensureReportAccess();
         [$tanggalMulai, $tanggalSelesai] = $this->resolveTanggal($request);
 
-        $data = StockMovement::with(['product', 'user'])
-            ->kategori(StockMovement::KATEGORI_MASUK)
-            ->when($tanggalMulai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
-            ->when($tanggalSelesai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
-            ->latest(StockMovement::columnDibuat())
-            ->get();
+        $data = $this->detailMutasi(StockMovement::KATEGORI_MASUK, $tanggalMulai, $tanggalSelesai);
 
         return view('reports.pembelian', [
             'tanggalMulai' => $tanggalMulai,
@@ -41,12 +37,7 @@ class ReportController extends Controller
         $this->ensureReportAccess();
         [$tanggalMulai, $tanggalSelesai] = $this->resolveTanggal($request);
 
-        $data = StockMovement::with(['product', 'user'])
-            ->kategori(StockMovement::KATEGORI_KELUAR)
-            ->when($tanggalMulai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
-            ->when($tanggalSelesai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
-            ->latest(StockMovement::columnDibuat())
-            ->get();
+        $data = $this->detailMutasi(StockMovement::KATEGORI_KELUAR, $tanggalMulai, $tanggalSelesai);
 
         return view('reports.penjualan', [
             'tanggalMulai' => $tanggalMulai,
@@ -61,14 +52,7 @@ class ReportController extends Controller
         $this->ensureReportAccess();
         [$tanggalMulai, $tanggalSelesai] = $this->resolveTanggal($request);
 
-        $data = StockMovement::with('product')
-            ->selectRaw('id_barang, SUM(jumlah) as total_jumlah, COUNT(*) as total_transaksi')
-            ->kategori(StockMovement::KATEGORI_MASUK)
-            ->when($tanggalMulai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
-            ->when($tanggalSelesai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
-            ->groupBy('id_barang')
-            ->orderByDesc('total_jumlah')
-            ->get();
+        $data = $this->rekapMutasi(StockMovement::KATEGORI_MASUK, $tanggalMulai, $tanggalSelesai);
 
         return view('reports.rekap-pembelian', [
             'tanggalMulai' => $tanggalMulai,
@@ -83,14 +67,7 @@ class ReportController extends Controller
         $this->ensureReportAccess();
         [$tanggalMulai, $tanggalSelesai] = $this->resolveTanggal($request);
 
-        $data = StockMovement::with('product')
-            ->selectRaw('id_barang, SUM(jumlah) as total_jumlah, COUNT(*) as total_transaksi')
-            ->kategori(StockMovement::KATEGORI_KELUAR)
-            ->when($tanggalMulai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
-            ->when($tanggalSelesai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
-            ->groupBy('id_barang')
-            ->orderByDesc('total_jumlah')
-            ->get();
+        $data = $this->rekapMutasi(StockMovement::KATEGORI_KELUAR, $tanggalMulai, $tanggalSelesai);
 
         return view('reports.rekap-penjualan', [
             'tanggalMulai' => $tanggalMulai,
@@ -105,12 +82,7 @@ class ReportController extends Controller
         $this->ensureReportAccess();
         [$tanggalMulai, $tanggalSelesai] = $this->resolveTanggal($request);
 
-        $data = StockMovement::with(['product', 'user'])
-            ->kategori(StockMovement::KATEGORI_HILANG)
-            ->when($tanggalMulai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
-            ->when($tanggalSelesai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
-            ->latest(StockMovement::columnDibuat())
-            ->get();
+        $data = $this->detailBarangHilang($tanggalMulai, $tanggalSelesai);
 
         return view('reports.barang-hilang', [
             'tanggalMulai' => $tanggalMulai,
@@ -125,24 +97,19 @@ class ReportController extends Controller
         $this->ensureReportAccess();
         [$tanggalMulai, $tanggalSelesai] = $this->resolveTanggal($request);
 
-        $data = StockMovement::with(['product', 'user'])
-            ->kategori(StockMovement::KATEGORI_MASUK)
-            ->when($tanggalMulai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
-            ->when($tanggalSelesai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
-            ->latest(StockMovement::columnDibuat())
-            ->get();
+        $data = $this->detailMutasi(StockMovement::KATEGORI_MASUK, $tanggalMulai, $tanggalSelesai);
 
         return $this->exportReport(
             $request,
             'Laporan Pembelian',
             $data,
-            ['Tanggal', 'Produk', 'Jumlah', 'User', 'Keterangan'],
+            ['Waktu', 'Barang', 'Jumlah', 'Keterangan', 'Input Oleh'],
             fn ($item) => [
-                $item->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i') ?? '-',
+                $item->created_at?->timezone('Asia/Jakarta')->format('d-m-Y H:i') ?? '-',
                 $item->product->nama ?? '-',
                 $item->jumlah,
-                $item->user->name ?? '-',
                 $item->keterangan ?? '-',
+                $item->user->name ?? '-',
             ],
             'laporan-pembelian-' . now()->format('YmdHis')
         );
@@ -153,24 +120,19 @@ class ReportController extends Controller
         $this->ensureReportAccess();
         [$tanggalMulai, $tanggalSelesai] = $this->resolveTanggal($request);
 
-        $data = StockMovement::with(['product', 'user'])
-            ->kategori(StockMovement::KATEGORI_KELUAR)
-            ->when($tanggalMulai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
-            ->when($tanggalSelesai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
-            ->latest(StockMovement::columnDibuat())
-            ->get();
+        $data = $this->detailMutasi(StockMovement::KATEGORI_KELUAR, $tanggalMulai, $tanggalSelesai);
 
         return $this->exportReport(
             $request,
             'Laporan Penjualan',
             $data,
-            ['Tanggal', 'Produk', 'Jumlah', 'User', 'Keterangan'],
+            ['Waktu', 'Barang', 'Jumlah', 'Keterangan', 'Input Oleh'],
             fn ($item) => [
-                $item->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i') ?? '-',
+                $item->created_at?->timezone('Asia/Jakarta')->format('d-m-Y H:i') ?? '-',
                 $item->product->nama ?? '-',
                 $item->jumlah,
-                $item->user->name ?? '-',
                 $item->keterangan ?? '-',
+                $item->user->name ?? '-',
             ],
             'laporan-penjualan-' . now()->format('YmdHis')
         );
@@ -181,24 +143,27 @@ class ReportController extends Controller
         $this->ensureReportAccess();
         [$tanggalMulai, $tanggalSelesai] = $this->resolveTanggal($request);
 
-        $data = StockMovement::with('product')
-            ->selectRaw('id_barang, SUM(jumlah) as total_jumlah, COUNT(*) as total_transaksi')
-            ->kategori(StockMovement::KATEGORI_MASUK)
-            ->when($tanggalMulai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
-            ->when($tanggalSelesai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
-            ->groupBy('id_barang')
-            ->orderByDesc('total_jumlah')
-            ->get();
+        $data = $this->rekapMutasi(StockMovement::KATEGORI_MASUK, $tanggalMulai, $tanggalSelesai);
 
         return $this->exportReport(
             $request,
             'Rekap Pembelian',
             $data,
-            ['Produk', 'Total Qty', 'Total Transaksi'],
+            ['Kode', 'Barang', 'Kategori', 'Stok Saat Ini', 'Total Qty', 'Aktivitas', 'Rata-rata', 'Qty Terkecil', 'Qty Terbesar', 'Aktivitas Pertama', 'Aktivitas Terakhir', 'Input Oleh', 'Keterangan'],
             fn ($item) => [
+                $item->product->kode ?? '-',
                 $item->product->nama ?? '-',
+                $item->product->kategori ?? '-',
+                (int) ($item->product->stok ?? 0),
                 (int) $item->total_jumlah,
                 (int) $item->total_transaksi,
+                number_format((float) $item->rata_rata, 2, ',', '.'),
+                (int) $item->jumlah_terkecil,
+                (int) $item->jumlah_terbesar,
+                $item->aktivitas_pertama?->timezone('Asia/Jakarta')->format('d-m-Y H:i') ?? '-',
+                $item->aktivitas_terakhir?->timezone('Asia/Jakarta')->format('d-m-Y H:i') ?? '-',
+                $item->input_oleh,
+                $item->keterangan,
             ],
             'rekap-pembelian-' . now()->format('YmdHis')
         );
@@ -209,24 +174,27 @@ class ReportController extends Controller
         $this->ensureReportAccess();
         [$tanggalMulai, $tanggalSelesai] = $this->resolveTanggal($request);
 
-        $data = StockMovement::with('product')
-            ->selectRaw('id_barang, SUM(jumlah) as total_jumlah, COUNT(*) as total_transaksi')
-            ->kategori(StockMovement::KATEGORI_KELUAR)
-            ->when($tanggalMulai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
-            ->when($tanggalSelesai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
-            ->groupBy('id_barang')
-            ->orderByDesc('total_jumlah')
-            ->get();
+        $data = $this->rekapMutasi(StockMovement::KATEGORI_KELUAR, $tanggalMulai, $tanggalSelesai);
 
         return $this->exportReport(
             $request,
             'Rekap Penjualan',
             $data,
-            ['Produk', 'Total Qty', 'Total Transaksi'],
+            ['Kode', 'Barang', 'Kategori', 'Stok Saat Ini', 'Total Qty', 'Aktivitas', 'Rata-rata', 'Qty Terkecil', 'Qty Terbesar', 'Aktivitas Pertama', 'Aktivitas Terakhir', 'Input Oleh', 'Keterangan'],
             fn ($item) => [
+                $item->product->kode ?? '-',
                 $item->product->nama ?? '-',
+                $item->product->kategori ?? '-',
+                (int) ($item->product->stok ?? 0),
                 (int) $item->total_jumlah,
                 (int) $item->total_transaksi,
+                number_format((float) $item->rata_rata, 2, ',', '.'),
+                (int) $item->jumlah_terkecil,
+                (int) $item->jumlah_terbesar,
+                $item->aktivitas_pertama?->timezone('Asia/Jakarta')->format('d-m-Y H:i') ?? '-',
+                $item->aktivitas_terakhir?->timezone('Asia/Jakarta')->format('d-m-Y H:i') ?? '-',
+                $item->input_oleh,
+                $item->keterangan,
             ],
             'rekap-penjualan-' . now()->format('YmdHis')
         );
@@ -237,12 +205,7 @@ class ReportController extends Controller
         $this->ensureReportAccess();
         [$tanggalMulai, $tanggalSelesai] = $this->resolveTanggal($request);
 
-        $data = StockMovement::with(['product', 'user'])
-            ->kategori(StockMovement::KATEGORI_HILANG)
-            ->when($tanggalMulai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
-            ->when($tanggalSelesai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
-            ->latest(StockMovement::columnDibuat())
-            ->get();
+        $data = $this->detailBarangHilang($tanggalMulai, $tanggalSelesai);
 
         return $this->exportReport(
             $request,
@@ -251,9 +214,9 @@ class ReportController extends Controller
             ['Tanggal', 'Produk', 'Jumlah', 'User', 'Keterangan'],
             fn ($item) => [
                 $item->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i') ?? '-',
-                $item->product->nama ?? '-',
+                $item->barang ?? $item->product->nama ?? '-',
                 $item->jumlah,
-                $item->user->name ?? '-',
+                $item->input_oleh ?? $item->user->name ?? '-',
                 $item->keterangan ?? '-',
             ],
             'barang-hilang-' . now()->format('YmdHis')
@@ -272,6 +235,59 @@ class ReportController extends Controller
         }
 
         return $this->exportExcel($title, $filenameBase . '.xls', $columns, $rows);
+    }
+
+    private function detailMutasi(string $kategori, ?string $tanggalMulai, ?string $tanggalSelesai)
+    {
+        return StockMovement::with(['product', 'user'])
+            ->kategori($kategori)
+            ->when($tanggalMulai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
+            ->when($tanggalSelesai, fn ($q) => $q->where($this->kolomWaktuMutasi(), '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
+            ->latest(StockMovement::columnDibuat())
+            ->get();
+    }
+
+    private function detailBarangHilang(?string $tanggalMulai, ?string $tanggalSelesai)
+    {
+        return LostStock::with(['product', 'user'])
+            ->when($tanggalMulai, fn ($q) => $q->where('waktu', '>=', $this->mulaiHariDiJakarta($tanggalMulai)))
+            ->when($tanggalSelesai, fn ($q) => $q->where('waktu', '<=', $this->akhirHariDiJakarta($tanggalSelesai)))
+            ->latest(LostStock::CREATED_AT)
+            ->get();
+    }
+
+    private function rekapMutasi(string $kategori, ?string $tanggalMulai, ?string $tanggalSelesai)
+    {
+        return $this->detailMutasi($kategori, $tanggalMulai, $tanggalSelesai)
+            ->groupBy('id_barang')
+            ->map(function ($items) {
+                $sorted = $items->sortBy(fn ($item) => $item->created_at?->timestamp ?? 0);
+                $keterangan = $items->pluck('keterangan')
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->implode('; ');
+                $inputOleh = $items->map(fn ($item) => $item->user?->name)
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->implode(', ');
+
+                return (object) [
+                    'product' => $items->first()->product,
+                    'total_jumlah' => (int) $items->sum('jumlah'),
+                    'total_transaksi' => $items->count(),
+                    'rata_rata' => (float) $items->avg('jumlah'),
+                    'jumlah_terkecil' => (int) $items->min('jumlah'),
+                    'jumlah_terbesar' => (int) $items->max('jumlah'),
+                    'aktivitas_pertama' => $sorted->first()?->created_at,
+                    'aktivitas_terakhir' => $sorted->last()?->created_at,
+                    'input_oleh' => $inputOleh !== '' ? $inputOleh : '-',
+                    'keterangan' => $keterangan !== '' ? $keterangan : '-',
+                ];
+            })
+            ->sortByDesc('total_jumlah')
+            ->values();
     }
 
     private function exportExcel(string $title, string $filename, array $columns, array $rows)

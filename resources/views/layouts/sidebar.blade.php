@@ -31,13 +31,13 @@
             font-family: "Segoe UI", Arial, sans-serif;
             background: var(--bg-app);
             color: var(--text-main);
-            font-size: 14px;
+            font-size: 18px;
             line-height: 1.55;
             overflow-x: hidden;
         }
 
         .topbar {
-            height: 74px;
+            height: 75px;
             border-bottom: 1px solid var(--line);
             display: flex;
             align-items: center;
@@ -51,8 +51,8 @@
         }
 
         .brand {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 30px;
+            font-weight: 850;
             color: #166534;
             margin: 0;
             letter-spacing: -0.02em;
@@ -73,7 +73,7 @@
             border-radius: 8px;
             border: 1px solid #cde9d2;
             background: #f3fff4;
-            font-size: 13px;
+            font-size: 28px;
             letter-spacing: 0.01em;
         }
 
@@ -91,7 +91,7 @@
         }
 
         .main {
-            padding: 18px;
+            padding: 15px;
         }
 
         .flash {
@@ -120,10 +120,10 @@
         button,
         textarea {
             font-family: inherit;
-            font-size: 14px;
+            font-size: 19px;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
-            padding: 9px 10px;
+            padding: 10px 10px;
             transition: all 0.18s ease;
             background: #fff;
             color: var(--text-main);
@@ -143,7 +143,7 @@
             color: #fff;
             border-color: var(--primary);
             font-weight: 600;
-            padding: 9px 14px;
+            padding: 12px 14px;
         }
 
         button:hover {
@@ -181,7 +181,8 @@
             overflow-x: auto;
         }
 
-        .app-table {
+        /* lebar kolom */
+        .app-table { 
             width: 100%;
             min-width: 680px;
             border-collapse: separate;
@@ -190,17 +191,17 @@
             border-radius: var(--radius-sm);
             overflow: hidden;
             background: var(--bg-card);
-        }
+        }   
 
         .app-table thead th {
             background: var(--bg-soft);
             color: #334155;
-            font-size: 13px;
+            font-size: 16px;
             font-weight: 700;
             border-bottom: 1px solid var(--line);
             text-transform: uppercase;
             letter-spacing: 0.02em;
-        }
+        } /* Table Daftar User */
 
         .app-table th,
         .app-table td {
@@ -245,11 +246,11 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 16px;
+            font-size: 19px;
             line-height: 1.25;
             border: 1px solid transparent;
             transition: all 0.15s ease;
-        }
+        } /* Sidebar Font*/
 
         aside a:hover {
             background: rgba(22, 101, 52, 0.95);
@@ -282,7 +283,7 @@
         }
 
         .layout-sidebar {
-            width: 280px;
+            width: 300px;
             background: linear-gradient(180deg, #14532d 0%, #166534 100%);
             color: #fff;
             padding: 16px;
@@ -365,6 +366,11 @@
             min-width: 0;
         }
 
+        .app-table th,
+        .app-table td {
+            font-size: 16px;
+        }
+
         .btn-link {
             display: inline-flex;
             align-items: center;
@@ -406,7 +412,7 @@
 
         @media (max-width: 1024px) {
             .layout-sidebar {
-                width: 236px;
+                width: 250px;
             }
 
             aside a {
@@ -466,7 +472,7 @@
             }
 
             .table-card {
-                padding: 12px;
+                padding: 16px;
                 border-radius: 10px;
             }
 
@@ -538,7 +544,7 @@
             .app-table th,
             .app-table td {
                 padding: 8px 9px;
-                font-size: 13px;
+                font-size: 16px;
             }
         }
     </style>
@@ -551,7 +557,8 @@
 
         <!-- SIDEBAR -->
         <aside class="layout-sidebar">
-            <h2 style="margin-top:0; margin-bottom:20px; color:#ffffff; font-size:26px; letter-spacing:-0.01em;">SIM Meubel</h2>
+            <h2 style="margin-top:0; margin-bottom:20px; color:#ffffff; font-size:26px; letter-spacing:-0.01em;">SIM
+                Meubel</h2>
 
             <a href="{{ route('dashboard') }}" class="{{ $activeMenu === 'dashboard' ? 'active' : '' }}">
                 <span class="menu-icon"><i class="bi bi-speedometer2" aria-hidden="true"></i></span>
@@ -565,14 +572,14 @@
                 </a>
             @endif
 
-            @if (auth()->user()?->role === 'admin')
+            @if (in_array(auth()->user()?->role, ['admin', 'owner'], true))
                 <a href="{{ route('products.index') }}" class="{{ $activeMenu === 'barang' ? 'active' : '' }}">
                     <span class="menu-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span>
                     <span>Data Barang</span>
                 </a>
             @endif
 
-            @if (auth()->user()?->role === 'admin')
+            @if (in_array(auth()->user()?->role, ['admin', 'owner'], true))
                 <a href="{{ route('stock-movements.incoming') }}" class="{{ $activeMenu === 'masuk' ? 'active' : '' }}">
                     <span class="menu-icon"><i class="bi bi-box-arrow-in-down" aria-hidden="true"></i></span>
                     <span>Barang Masuk</span>
@@ -582,7 +589,9 @@
                     <span class="menu-icon"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></span>
                     <span>Barang Keluar</span>
                 </a>
+            @endif
 
+            @if (auth()->user()?->role === 'admin')
                 <a href="{{ route('stock-movements.lost') }}" class="{{ $activeMenu === 'hilang' ? 'active' : '' }}">
                     <span class="menu-icon"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></span>
                     <span>Input Barang Hilang</span>
@@ -601,15 +610,15 @@
                     <span class="menu-icon"><i class="bi bi-receipt" aria-hidden="true"></i></span>
                     <span>Laporan Pembelian</span>
                 </a>
-                <a href="{{ route('reports.penjualan') }}"
-                    class="{{ $activeMenu === 'reports-penjualan' ? 'active' : '' }}">
-                    <span class="menu-icon"><i class="bi bi-cash-coin" aria-hidden="true"></i></span>
-                    <span>Laporan Penjualan</span>
-                </a>
                 <a href="{{ route('reports.rekap-pembelian') }}"
                     class="{{ $activeMenu === 'reports-rekap-pembelian' ? 'active' : '' }}">
                     <span class="menu-icon"><i class="bi bi-bar-chart-line" aria-hidden="true"></i></span>
                     <span>Rekap Pembelian</span>
+                </a>
+                <a href="{{ route('reports.penjualan') }}"
+                    class="{{ $activeMenu === 'reports-penjualan' ? 'active' : '' }}">
+                    <span class="menu-icon"><i class="bi bi-cash-coin" aria-hidden="true"></i></span>
+                    <span>Laporan Penjualan</span>
                 </a>
                 <a href="{{ route('reports.rekap-penjualan') }}"
                     class="{{ $activeMenu === 'reports-rekap-penjualan' ? 'active' : '' }}">
@@ -638,6 +647,10 @@
             <main class="main">
                 @if (session('success'))
                     <div class="flash success">{{ session('success') }}</div>
+                @endif
+
+                @if (session('warning'))
+                    <div class="flash error">{{ session('warning') }}</div>
                 @endif
 
                 @if ($errors->any())

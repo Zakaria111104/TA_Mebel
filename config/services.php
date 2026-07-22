@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'whatsapp' => [
+        'endpoint' => env('WHATSAPP_GATEWAY_ENDPOINT', 'https://api.fonnte.com/send'),
+        'token' => env('WHATSAPP_GATEWAY_TOKEN'),
+        'target_number' => env('WHATSAPP_TARGET_NUMBER'),
+        'target_numbers' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('WHATSAPP_TARGET_NUMBERS', env('WHATSAPP_TARGET_NUMBER', '')))
+        ))),
+    ],
+
 ];

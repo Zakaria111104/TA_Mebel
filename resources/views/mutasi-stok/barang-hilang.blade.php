@@ -4,10 +4,22 @@
 @section('active_menu', 'hilang')
 
 @section('content')
-    <style>
+    @php($keteranganKehilangan = ['Hilang'])
+
+    <!-- <style>
         .panel { margin-bottom: 14px; }
         .inline { display: grid; grid-template-columns: 1fr 220px 1fr auto; gap: 10px; }
-    </style>
+    </style> -->
+    <style>
+    .panel { margin-bottom: 14px; }
+    .inline { display: grid; grid-template-columns: 1fr 220px 1fr auto; gap: 10px; }
+
+    @media (max-width: 768px) {
+        .inline {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 
     <div class="table-card panel">
         <h2>Input Barang Hilang</h2>
@@ -20,7 +32,12 @@
                 @endforeach
             </select>
             <input type="number" name="jumlah" min="1" placeholder="Jumlah hilang" required>
-            <input type="text" name="keterangan" placeholder="Keterangan kehilangan">
+            <select name="keterangan" required>
+                <option value="">Pilih keterangan</option>
+                @foreach ($keteranganKehilangan as $keterangan)
+                    <option value="{{ $keterangan }}">{{ $keterangan }}</option>
+                @endforeach
+            </select>
             <button type="submit" style="background:#b91c1c; border-color:#b91c1c;">Simpan</button>
         </form>
     </div>
@@ -40,11 +57,11 @@
             <tbody>
                 @forelse ($movements as $movement)
                     <tr>
-                        <td>{{ $movement->created_at?->timezone('Asia/Jakarta')->format('d-m-Y H:i') ?? '—' }}</td>
-                        <td>{{ $movement->product->nama }}</td>
+                        <td>{{ ($movement->waktu ?? $movement->created_at)?->timezone('Asia/Jakarta')->format('d-m-Y H:i') ?? '—' }}</td>
+                        <td>{{ $movement->barang ?? $movement->product?->nama ?? '-' }}</td>
                         <td>{{ $movement->jumlah }}</td>
                         <td>{{ $movement->keterangan ?? '-' }}</td>
-                        <td>{{ $movement->user?->name ?? '-' }}</td>
+                        <td>{{ $movement->input_oleh ?? $movement->user?->name ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr><td colspan="5">Belum ada data barang hilang.</td></tr>

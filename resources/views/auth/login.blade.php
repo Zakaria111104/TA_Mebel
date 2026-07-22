@@ -17,17 +17,17 @@
 
         .card {
             width: 100%;
-            max-width: 420px;
+            max-width: 450px;
             background: rgba(255, 255, 255, 0.98);
             border-radius: 16px;
             border: 1px solid #dbe2ea;
             box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
-            padding: 30px 28px;
+            padding: 30px 45px;
         }
         h1 {
             margin-top: 0;
             margin-bottom: 8px;
-            font-size: 28px;
+            font-size: 40px;
             color: #14532d;
             letter-spacing: -0.02em;
         }
@@ -49,7 +49,7 @@
             border-radius: 10px;
             padding: 11px 12px;
             margin-bottom: 14px;
-            font-size: 14px;
+            font-size: 16px;
             transition: all 0.18s ease;
         }
         input:focus {
@@ -64,7 +64,7 @@
             border: 0;
             border-radius: 10px;
             padding: 12px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.16s ease;
@@ -93,8 +93,8 @@
 
 <body>
     <div class="card">
-        <h1><center>SIM Meubel</center></h1>
-        <p class="hint" style="text-align:center; font-size:16px; color:grey; font-weight:700;">Login untuk akses web</p>
+        <h1><center>SIM Mebel</center></h1>
+        <p class="hint" style="text-align:center; font-size:16px; color:grey; font-weight:700;"></p>
 
         @if ($errors->any())
             <div class="error">{{ $errors->first() }}</div>
@@ -109,7 +109,7 @@
             <label for="password">Password</label>
             <input id="password" name="password" type="password" required>
 
-            <button type="submit">Masuk</button>
+            <button type="submit">Login</button>
         </form>
 
     </div>

@@ -47,7 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/laporan/rekap-pembelian/export', [ReportController::class, 'exportRekapPembelian'])->name('reports.rekap-pembelian.export');
     Route::get('/admin/laporan/rekap-penjualan/export', [ReportController::class, 'exportRekapPenjualan'])->name('reports.rekap-penjualan.export');
     Route::get('/admin/laporan/barang-hilang/export', [ReportController::class, 'exportBarangHilang'])->name('reports.barang-hilang.export');
-    
+
     // Backward compatibility: route lama laporan barang
     Route::get('/admin/laporan-barang', function () {
         return redirect()->route('reports.pembelian');

@@ -46,10 +46,10 @@
             <tbody>
                 @forelse ($data as $item)
                     <tr>
-                        <td>{{ $item->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i') ?? '—' }}</td>
-                        <td>{{ $item->product->nama ?? '-' }}</td>
+                        <td>{{ ($item->waktu ?? $item->created_at)?->timezone('Asia/Jakarta')->format('d/m/Y H:i') ?? '—' }}</td>
+                        <td>{{ $item->barang ?? $item->product->nama ?? '-' }}</td>
                         <td>{{ $item->jumlah }}</td>
-                        <td>{{ $item->user->name ?? '-' }}</td>
+                        <td>{{ $item->input_oleh ?? $item->user->name ?? '-' }}</td>
                         <td>{{ $item->keterangan ?? '-' }}</td>
                     </tr>
                 @empty

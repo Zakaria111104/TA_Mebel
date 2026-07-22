@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function index(Request $request): View
     {
-        $this->ensureAdmin();
+        $this->ensureAdminOrOwner();
 
         $opsiUrut = $request->input('urut', 'nama_asc');
         $query = Product::query();
@@ -38,8 +38,11 @@ class ProductController extends Controller
             'nama' => ['required', 'string', 'max:255'],
             'kategori' => ['nullable', 'string', 'max:100'],
             'stok' => ['required', 'integer', 'min:0'],
-            'stok_minimum' => ['required', 'integer', 'min:0'],
-            'deskripsi' => ['nullable', 'string'],
+            'stok_minimum' => ['required', 'integer', 'min:0', 'lte:stok'],
+            'keterangan' => ['nullable', 'string'],
+        ], [
+            'kode.unique' => 'Kode barang sudah digunakan, gunakan kode lain.',
+            'stok_minimum.lte' => 'Stok minimum tidak boleh lebih besar dari stok barang.',
         ]);
 
         Product::create($validated);
@@ -56,8 +59,11 @@ class ProductController extends Controller
             'nama' => ['required', 'string', 'max:255'],
             'kategori' => ['nullable', 'string', 'max:100'],
             'stok' => ['required', 'integer', 'min:0'],
-            'stok_minimum' => ['required', 'integer', 'min:0'],
-            'deskripsi' => ['nullable', 'string'],
+            'stok_minimum' => ['required', 'integer', 'min:0', 'lte:stok'],
+            'keterangan' => ['nullable', 'string'],
+        ], [
+            'kode.unique' => 'Kode barang sudah digunakan, gunakan kode lain.',
+            'stok_minimum.lte' => 'Stok minimum tidak boleh lebih besar dari stok barang.',
         ]);
 
         $product->update($validated);
@@ -78,4 +84,10 @@ class ProductController extends Controller
     {
         abort_unless(auth()->user()?->role === 'admin', 403);
     }
+
+    private function ensureAdminOrOwner(): void
+    {
+        abort_unless(in_array(auth()->user()?->role, ['admin', 'owner'], true), 403);
+    }
+
 }

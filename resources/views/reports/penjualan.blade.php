@@ -33,21 +33,21 @@
         <table class="app-table report-table">
             <thead>
                 <tr>
-                    <th>Tanggal</th>
-                    <th>Produk</th>
+                    <th>Waktu</th>
+                    <th>Barang</th>
                     <th>Jumlah</th>
-                    <th>User</th>
                     <th>Keterangan</th>
+                    <th>Input Oleh</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($data as $item)
                     <tr>
-                        <td>{{ $item->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i') ?? '—' }}</td>
+                        <td>{{ $item->created_at?->timezone('Asia/Jakarta')->format('d-m-Y H:i') ?? '-' }}</td>
                         <td>{{ $item->product->nama ?? '-' }}</td>
                         <td>{{ $item->jumlah }}</td>
-                        <td>{{ $item->user->name ?? '-' }}</td>
                         <td>{{ $item->keterangan ?? '-' }}</td>
+                        <td>{{ $item->user->name ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr>

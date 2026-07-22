@@ -87,7 +87,7 @@
 
         .stat-value {
             margin-top: 4px;
-            font-size: 34px;
+            font-size: 35px;
             line-height: 1.1;
             font-weight: 800;
             color: #0f172a;
@@ -131,38 +131,6 @@
             font-family: var(--font-heading);
             letter-spacing: -0.015em;
         }
-
-        /* .bars {
-                    display: flex;
-                    align-items: flex-end;
-                    gap: 20px;
-                    height: 300px;
-                } */
-
-        /* .bar-row {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 8px;
-                    width: 60px;
-                } */
-
-        /* .bar-track {
-                    width: 100%;
-                    height: 150px;
-                    background: #eef2f7;
-                    border-radius: 10px;
-                    position: relative;
-                    overflow: hidden;
-                } */
-
-        /* .bar-fill {
-                    position: absolute;
-                    bottom: 0;
-                    width: 100%;
-                    height: 60%;
-                    background: linear-gradient(to top, forestgreen, #34d399);
-                } */
 
         .list {
             margin: 0;
@@ -433,6 +401,92 @@
             font-weight: 600;
             color: #713f12;
         }
+
+        .wa-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin: 14px 0;
+        }
+
+        .wa-metric {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+            padding: 12px 14px;
+            min-width: 0;
+        }
+
+        .wa-metric span {
+            display: block;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            font-family: var(--font-heading);
+        }
+
+        .wa-metric strong {
+            display: block;
+            margin-top: 4px;
+            color: #0f172a;
+            font-size: 24px;
+            line-height: 1.1;
+            font-family: var(--font-heading);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .wa-auto-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 32px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 12px;
+            font-weight: 800;
+            font-family: var(--font-heading);
+        }
+
+        .wa-auto-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .wa-message-preview {
+            margin-top: 14px;
+            border: 1px solid #dbe2ea;
+            border-radius: 10px;
+            background: #f8fafc;
+            padding: 12px 14px;
+            color: #334155;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .wa-note {
+            margin: 10px 0 0;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 760px) {
+            .wa-summary,
+            .compare-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .yearly-chart {
+                overflow-x: auto;
+                grid-template-columns: repeat(12, 54px);
+                padding-bottom: 8px;
+            }
+        }
     </style>
 
     <section class="hero">
@@ -506,6 +560,63 @@
             </svg>
         </article>
     </div>
+
+    <section class="panel" style="margin-top:14px;">
+        <div class="yearly-header">
+            <div>
+                <h3 style="margin:0;">Notifikasi Stok Minimum via WhatsApp</h3>
+                <div style="font-size:13px; color:#64748b; margin-top:4px;">
+                    Sistem mengirim pesan otomatis ke nomor penerima saat stok barang mencapai batas minimum.
+                </div>
+            </div>
+            <span class="wa-auto-badge {{ $nomorPenerimaWhatsApp->isNotEmpty() ? '' : 'pending' }}">
+                {{ $nomorPenerimaWhatsApp->isNotEmpty() ? 'Otomatis aktif' : 'Nomor belum diatur' }}
+            </span>
+        </div>
+
+        <div class="wa-summary">
+            <div class="wa-metric">
+                <span>Barang Stok Minimum</span>
+                <strong>{{ number_format($stokMenipis) }}</strong>
+            </div>
+            <div class="wa-metric">
+                <span>Persentase Stok Aman</span>
+                <strong>{{ $persentaseStokAman }}%</strong>
+            </div>
+            <div class="wa-metric">
+                <span>Nomor Penerima</span>
+                <strong>{{ $nomorPenerimaWhatsApp->isNotEmpty() ? $nomorPenerimaWhatsApp->implode(', ') : '-' }}</strong>
+            </div>
+        </div>
+
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>Produk</th>
+                    <th>Stok</th>
+                    <th>Stok Minimum</th>
+                    <th>Kondisi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($produkStokMenipis as $produk)
+                    <tr>
+                        <td><strong>{{ $produk->nama }}</strong></td>
+                        <td>{{ number_format((int) $produk->stok) }} unit</td>
+                        <td>{{ number_format((int) $produk->stok_minimum) }} unit</td>
+                        <td>Perlu restock</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4">Semua stok barang masih berada di atas stok minimum.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        <div class="wa-message-preview">{{ $pesanWhatsAppStokMinimum }}</div>
+        <p class="wa-note">Pesan dikirim otomatis oleh sistem setelah transaksi barang keluar atau barang hilang membuat stok mencapai batas minimum.</p>
+    </section>
 
     <!-- <div class="stock-alert">
             Stok Menipis: <strong>{{ $stokMenipis }}</strong> produk perlu perhatian.
