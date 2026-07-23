@@ -1,58 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Informasi Manajemen Stok Berbasis Website pada Mebel Fauz
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Tugas Akhir (TA) — Program Studi Manajemen Informatika, Politeknik Negeri Jember
 
-## About Laravel
+**Nama** : Zakaria
+**NIM** : E31231972
+**Judul TA** : Rancang Bangun Sistem Informasi Manajemen Stok Berbasis Website pada Mebel Fauz
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📋 Deskripsi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Sistem Informasi Manajemen Stok ini dibangun untuk membantu proses pencatatan dan pengelolaan stok barang pada usaha mebel Fauz, yang meliputi pencatatan barang masuk, barang keluar, mutasi stok, hingga pelaporan barang hilang. Sistem dikembangkan menggunakan metode pengembangan perangkat lunak **Waterfall** dan dilengkapi dengan fitur ekspor laporan ke format PDF dan Excel.
 
-## Learning Laravel
+## 🛠️ Teknologi yang Digunakan
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Framework**: Laravel
+- **Bahasa Pemrograman**: PHP
+- **Basis Data**: MySQL
+- **Metode Pengembangan**: Waterfall
+- **Export Laporan**: `barryvdh/laravel-dompdf` (PDF), `maatwebsite/excel` (Excel)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## ✨ Fitur Utama
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- Manajemen data barang dan kategori barang
+- Pencatatan barang masuk dan barang keluar
+- Pencatatan mutasi stok dan barang hilang
+- Role-based access control (Admin & Owner)
+- Filter laporan berdasarkan rentang tanggal
+- Ekspor laporan ke PDF dan Excel
+- Validasi input berbahasa Indonesia
 
-## Agentic Development
+## 🗂️ Struktur Basis Data
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Sistem ini menggunakan 8 tabel utama:
+
+| Tabel | Keterangan |
+|---|---|
+| `users` | Data pengguna (admin/owner) |
+| `kategori_barang` | Kategori/jenis barang mebel |
+| `barang` | Data master barang |
+| `mutasi_stok` | Riwayat perubahan stok |
+| `barang_masuk` | Pencatatan barang masuk |
+| `barang_keluar` | Pencatatan barang keluar |
+| `barang_hilang` | Pencatatan barang hilang |
+| `sessions` | Data sesi login pengguna |
+
+## 🚀 Instalasi & Menjalankan Proyek
 
 ```bash
-composer require laravel/boost --dev
+# Clone repository
+git clone https://github.com/Zakaria04/TA_Mebel.git
+cd TA_Mebel
 
-php artisan boost:install
+# Install dependency PHP
+composer install
+
+# Salin file environment
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+
+# Konfigurasi database di file .env, lalu jalankan migrasi
+php artisan migrate
+
+# (Opsional) jalankan seeder jika tersedia
+php artisan db:seed
+
+# Jalankan server lokal
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## 👤 Role Pengguna
 
-## Contributing
+- **Admin**: mengelola data barang, transaksi barang masuk/keluar, dan mutasi stok
+- **Owner**: memantau laporan stok dan mengakses ringkasan data
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 📄 Lisensi
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Proyek ini dibuat untuk keperluan akademik (Tugas Akhir) di Politeknik Negeri Jember.
