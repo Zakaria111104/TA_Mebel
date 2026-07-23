@@ -2,7 +2,7 @@
 
 Tugas Akhir (TA) — Program Studi Manajemen Informatika, Jurusan Teknologi Informasi, Politeknik Negeri Jember
 
-**Nama** : Zakaria
+**Nama** : Zakaria Dinova Ramadhan
 **NIM** : E31231972
 **Judul TA** : Rancang Bangun Sistem Informasi Manajemen Stok Berbasis Website pada Mebel Fauz
 
