@@ -6,18 +6,18 @@ Tugas Akhir (TA) — Program Studi Manajemen Informatika, Jurusan Teknologi Info
 **NIM** : E31231972
 **Judul TA** : Rancang Bangun Sistem Informasi Manajemen Stok Berbasis Website pada Mebel Fauz
 
-## 📋 Deskripsi
+## Deskripsi
 
 Sistem Informasi Manajemen Stok ini dibangun untuk membantu proses pencatatan dan pengelolaan stok barang pada usaha mebel Fauz, yang meliputi pencatatan barang masuk, barang keluar, mutasi stok, hingga pelaporan barang hilang. Sistem dikembangkan menggunakan metode pengembangan perangkat lunak Waterfall dan dilengkapi dengan fitur ekspor laporan ke format PDF dan Excel.
 
-## 🛠️ Teknologi yang Digunakan
+## Teknologi yang Digunakan
 
 - **Framework**: Laravel
 - **Bahasa Pemrograman**: PHP
 - **Basis Data**: MySQL
 - **Metode Pengembangan**: Waterfall
 
-## ✨ Fitur Utama
+## Fitur Utama
 
 - Manajemen data barang dan kategori barang
 - Pencatatan barang masuk dan barang keluar
@@ -27,7 +27,7 @@ Sistem Informasi Manajemen Stok ini dibangun untuk membantu proses pencatatan da
 - Ekspor laporan ke PDF dan Excel
 - Notifikasi otomatis stok minimum via WhatsApp
 
-## 👤 Role Pengguna
+## Role Pengguna
 
 - **Admin**: mengelola data barang, transaksi barang masuk/keluar, dan mutasi stok
 - **Owner**: memantau laporan stok dan mengakses ringkasan data
